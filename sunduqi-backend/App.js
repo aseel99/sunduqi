@@ -18,15 +18,26 @@ console.log('🔧 Initializing application...');
 console.log(`Environment: ${NODE_ENV}`);
 console.log(`Port: ${PORT}`);
 
-// Enhanced Middleware Setup
+// Logging
 app.use((req, res, next) => {
   console.log(`🛣️  ${req.method} ${req.url}`);
   next();
 });
 
-// ✅ Updated CORS Configuration
+// ✅ Correct CORS configuration
+const allowedOrigins = [
+  'https://sunduqi.vercel.app',
+  'https://sunduqi-git-main-aseel99s-projects.vercel.app'
+];
+
 app.use(cors({
-  origin: '*', // للسماح لكل الدومينات مؤقتًا
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -45,20 +56,22 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 console.log('✅ Body parsers configured');
 
-// Routes
+// Static files
 app.use('/uploads', express.static('uploads'));
+
+// Routes
 console.log('🔄 Loading routes...');
 app.use('/api', routes);
 console.log('✅ Routes mounted at /api');
 
-// Error Handling
+// Error Handling Middleware
 app.use((err, req, res, next) => {
   if (!err.statusCode) err.statusCode = 500;
   console.error('❗ Error:', err.message, err.stack);
   next(err);
 });
 
-// Disable caching globally for all API responses
+// Disable caching for APIs
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {
     res.set('Cache-Control', 'no-store');
@@ -69,7 +82,7 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 console.log('✅ Error handler configured');
 
-// Database Connection and Server Startup
+// DB Connection and Server Start
 console.log('🔗 Connecting to database...');
 db.sequelize.authenticate()
   .then(() => {
