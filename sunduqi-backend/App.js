@@ -9,6 +9,7 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 app.use(express.json());
+
 // Configuration
 const PORT = process.env.PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || 'development';
@@ -23,8 +24,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// ✅ Updated CORS Configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
+  origin: '*', // للسماح لكل الدومينات مؤقتًا
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -64,7 +66,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(errorHandler);
 console.log('✅ Error handler configured');
 
@@ -73,25 +74,23 @@ console.log('🔗 Connecting to database...');
 db.sequelize.authenticate()
   .then(() => {
     console.log('✅ Database connection established');
-    
-    // Sync models with cautious approach
+
     const syncOptions = {
       alter: NODE_ENV === 'development',
       force: false,
       logging: console.log
     };
-    
+
     return db.sequelize.sync(syncOptions);
   })
   .then(() => {
     console.log('🔄 Database models synchronized');
-    
+
     const server = app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📡 Environment: ${NODE_ENV}`);
     });
-    
-    // Handle shutdown gracefully
+
     process.on('SIGINT', () => {
       console.log('\n🛑 Received SIGINT. Shutting down gracefully...');
       server.close(() => {
