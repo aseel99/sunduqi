@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  direction: rtl;
+  @apply bg-graylight text-secondary font-arabic text-sm leading-relaxed;
+}
+
+/* الحقول */
+input, select, textarea {
+  @apply border border-bordergray rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary transition;
+}
+
+/* الأزرار العامة */
+button {
+  @apply font-semibold transition duration-150 ease-in-out rounded px-4 py-2;
+}
+
+/* زر أساسي */
+.btn-primary {
+  @apply bg-primary text-white hover:bg-accent;
+}
+
+/* زر ثانوي */
+.btn-secondary {
+  @apply bg-gray-200 text-secondary hover:bg-gray-300;
+}
+
+/* عناوين */
+.heading {
+  @apply text-lg font-bold text-secondary mb-2;
+}
+
+/* كروت */
+.card {
+  @apply bg-white p-4 rounded-xl shadow-card;
+}
+
+/* جداول */
+table {
+  @apply w-full border text-right text-sm;
+}
+th {
+  @apply bg-gray-100 border px-2 py-2 text-secondary;
+}
+td {
+  @apply border px-2 py-2;
+}
+tr:hover {
+  @apply bg-gray-50;
+}
