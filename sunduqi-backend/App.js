@@ -10,7 +10,6 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 app.use(express.json());
 
-// Configuration
 const PORT = process.env.PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -18,18 +17,14 @@ console.log('🔧 Initializing application...');
 console.log(`Environment: ${NODE_ENV}`);
 console.log(`Port: ${PORT}`);
 
-// Logging
-app.use((req, res, next) => {
-  console.log(`🛣️  ${req.method} ${req.url}`);
-  next();
-});
-
-// ✅ Correct CORS configuration
+// ✅ قائمة الدومينات المسموح بها
 const allowedOrigins = [
+  'https://sunduqi-g1ho0dklr-aseel99s-projects.vercel.app',
   'https://sunduqi.vercel.app',
-  'https://sunduqi-git-main-aseel99s-projects.vercel.app'
+  'http://localhost:5173'
 ];
 
+// ✅ إعداد CORS
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -56,22 +51,18 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 console.log('✅ Body parsers configured');
 
-// Static files
 app.use('/uploads', express.static('uploads'));
-
-// Routes
 console.log('🔄 Loading routes...');
 app.use('/api', routes);
 console.log('✅ Routes mounted at /api');
 
-// Error Handling Middleware
+// Error handling
 app.use((err, req, res, next) => {
   if (!err.statusCode) err.statusCode = 500;
   console.error('❗ Error:', err.message, err.stack);
-  next(err);
+  res.status(err.statusCode).json({ success: false, message: err.message });
 });
 
-// Disable caching for APIs
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {
     res.set('Cache-Control', 'no-store');
@@ -82,7 +73,7 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 console.log('✅ Error handler configured');
 
-// DB Connection and Server Start
+// DB and server start
 console.log('🔗 Connecting to database...');
 db.sequelize.authenticate()
   .then(() => {
@@ -101,7 +92,6 @@ db.sequelize.authenticate()
 
     const server = app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📡 Environment: ${NODE_ENV}`);
     });
 
     process.on('SIGINT', () => {
@@ -113,14 +103,14 @@ db.sequelize.authenticate()
             process.exit(0);
           })
           .catch(err => {
-            console.error('❌ Error closing database connection:', err);
+            console.error('❌ Error closing DB:', err);
             process.exit(1);
           });
       });
     });
   })
   .catch(err => {
-    console.error('❌ Fatal error during startup:', err);
+    console.error('❌ Startup error:', err);
     process.exit(1);
   });
 
