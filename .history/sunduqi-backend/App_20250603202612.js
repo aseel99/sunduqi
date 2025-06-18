@@ -9,8 +9,7 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 app.use(express.json());
-
-// Environment setup
+// Configuration
 const PORT = process.env.PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -18,13 +17,12 @@ console.log('🔧 Initializing application...');
 console.log(`Environment: ${NODE_ENV}`);
 console.log(`Port: ${PORT}`);
 
-// Logging each request method + URL
+// Enhanced Middleware Setup
 app.use((req, res, next) => {
   console.log(`🛣️  ${req.method} ${req.url}`);
   next();
 });
 
-// ✅ CORS configuration (allow all or from environment)
 app.use(cors({
   origin: process.env.CORS_ORIGIN || '*',
   credentials: true,
@@ -33,30 +31,32 @@ app.use(cors({
 }));
 console.log('✅ CORS configured');
 
-// ✅ Add security headers
 app.use(helmet());
 console.log('✅ Security headers enabled');
 
-// ✅ Request logging (disabled in test env)
 if (NODE_ENV !== 'test') {
   app.use(morgan('dev'));
   console.log('✅ Request logging enabled');
 }
 
-// ✅ Body parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 console.log('✅ Body parsers configured');
 
-// ✅ Static files for uploads
+// Routes
 app.use('/uploads', express.static('uploads'));
-
-// ✅ Mount routes under /api
 console.log('🔄 Loading routes...');
 app.use('/api', routes);
 console.log('✅ Routes mounted at /api');
 
-// ✅ Disable caching for API responses
+// Error Handling
+app.use((err, req, res, next) => {
+  if (!err.statusCode) err.statusCode = 500;
+  console.error('❗ Error:', err.message, err.stack);
+  next(err);
+});
+
+// Disable caching globally for all API responses
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {
     res.set('Cache-Control', 'no-store');
@@ -64,33 +64,34 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Centralized error handler
+
 app.use(errorHandler);
 console.log('✅ Error handler configured');
 
-// ✅ Database connection and server startup
+// Database Connection and Server Startup
 console.log('🔗 Connecting to database...');
 db.sequelize.authenticate()
   .then(() => {
     console.log('✅ Database connection established');
-
+    
+    // Sync models with cautious approach
     const syncOptions = {
       alter: NODE_ENV === 'development',
       force: false,
       logging: console.log
     };
-
+    
     return db.sequelize.sync(syncOptions);
   })
   .then(() => {
     console.log('🔄 Database models synchronized');
-
+    
     const server = app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📡 Environment: ${NODE_ENV}`);
     });
-
-    // ✅ Graceful shutdown
+    
+    // Handle shutdown gracefully
     process.on('SIGINT', () => {
       console.log('\n🛑 Received SIGINT. Shutting down gracefully...');
       server.close(() => {

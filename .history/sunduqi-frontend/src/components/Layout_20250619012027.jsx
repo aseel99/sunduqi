@@ -72,11 +72,11 @@ function Layout() {
       key={link.path}
       to={link.path}
       onClick={() => setMobileMenuOpen(false)}
-      className={`flex items-center gap-2 rounded px-4 py-2 ${isActive(link.path) ? 'bg-gray-200 font-bold' : ''} ${isMobile ? 'text-[#2e3e50]' : 'text-white'} ${isMobile ? 'text-base' : 'text-sm'}`}
+      className={`flex items-center px-4 py-2 rounded hover:bg-gray-200 transition font-[Tajawal] ${isActive(link.path) ? 'bg-gray-300 font-bold' : 'text-gray-700'} ${isMobile ? 'text-base' : 'text-sm'}`}
     >
-      <span>{link.icon}</span>
+      <span className="ml-2">{link.icon}</span>
       {link.name}
-      {link.badge > 0 && <span className="badge">{link.badge}</span>}
+      {link.badge > 0 && <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-0.5">{link.badge}</span>}
     </Link>
   );
 
@@ -84,9 +84,11 @@ function Layout() {
     <div key="submenu" className="space-y-1">
       <button
         onClick={() => setSubmenuOpen(!submenuOpen)}
-        className={`flex items-center justify-between w-full rounded px-4 py-2 ${submenuOpen ? 'bg-gray-200 font-bold' : ''} ${isMobile ? 'text-[#2e3e50]' : 'text-white'} ${isMobile ? 'text-base' : 'text-sm'}`}
+        className={`flex items-center justify-between w-full px-4 py-2 rounded hover:bg-gray-200 transition font-[Tajawal] ${submenuOpen ? 'bg-gray-300 font-bold' : 'text-gray-700'} ${isMobile ? 'text-base' : 'text-sm'}`}
       >
-        <span className="flex items-center gap-2">📂 تفاصيل الكاش والسندات</span>
+        <span className="flex items-center">
+          <span className="ml-2">📂</span> تفاصيل الكاش والسندات
+        </span>
         <svg className={`h-4 w-4 transform transition-transform ${submenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
         </svg>
@@ -100,20 +102,20 @@ function Layout() {
   );
 
   return (
-    <div className="min-h-screen flex bg-lightgray text-darkgray font-arabic" dir="rtl">
+    <div className="min-h-screen flex bg-gray-100 text-gray-800 font-[Tajawal]" dir="rtl">
       {/* Sidebar Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-[#2e3e50] text-white rounded-tr-xl rounded-br-xl shadow-md">
-        <div className="sidebar-header p-4 text-center">
-          <img src={logo} alt="صندوقي" className="h-12 w-auto mx-auto mb-2" />
+      <aside className="hidden md:flex flex-col w-64 bg-[#2e3e50] text-white shadow-xl">
+        <div className="text-center py-4 border-b border-gray-700">
+          <img src={logo} alt="شعار" className="h-12 w-auto mx-auto mb-1" />
           <div className="text-xl font-bold">صندوقي</div>
-          <div className="text-xs opacity-80">نظام إدارة الكاش</div>
+          <div className="text-xs text-gray-300">نظام إدارة الكاش</div>
         </div>
         <div className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
           {filteredLinks.map(link => link.type === 'submenu' ? renderSubmenu(false) : renderLink(link, false))}
         </div>
-        <div className="p-4 border-t border-gray-600">
-          <button onClick={handleLogout} className="flex items-center gap-2 text-white">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="p-4 border-t border-gray-700">
+          <button onClick={handleLogout} className="flex items-center text-sm text-white hover:text-red-400">
+            <svg className="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
             </svg>
             تسجيل خروج
@@ -122,7 +124,7 @@ function Layout() {
       </aside>
 
       {/* Sidebar Mobile */}
-      <div className={`fixed inset-0 bg-white z-50 transition-transform duration-300 md:hidden ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed inset-0 z-50 bg-white md:hidden transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="flex items-center justify-between px-4 py-4 bg-[#2e3e50] text-white">
           <div className="flex items-center gap-2">
             <img src={logo} alt="شعار" className="h-8 w-auto" />
@@ -134,10 +136,10 @@ function Layout() {
             </svg>
           </button>
         </div>
-        <nav className="px-4 py-4 space-y-2">
+        <nav className="px-4 py-4 space-y-2 text-gray-800">
           {filteredLinks.map(link => link.type === 'submenu' ? renderSubmenu(true) : renderLink(link, true))}
-          <button onClick={handleLogout} className="flex items-center gap-2 text-[#2e3e50] mt-4">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <button onClick={handleLogout} className="mt-4 flex items-center text-sm text-red-600">
+            <svg className="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
             </svg>
             تسجيل خروج
@@ -147,22 +149,22 @@ function Layout() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
-        <header className="mobile-header">
-          <button onClick={() => setMobileMenuOpen(true)} className="text-[#2e3e50]">
+        <header className="md:hidden flex items-center justify-between bg-white px-4 py-3 shadow">
+          <button onClick={() => setMobileMenuOpen(true)} className="text-gray-800">
             <svg className="h-6 w-6" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold">{user?.full_name}</span>
-            <button onClick={handleLogout} className="text-[#2e3e50] hover:text-red-600" title="Log out">
+            <span className="text-sm font-semibold text-gray-800">{user?.full_name}</span>
+            <button onClick={handleLogout} className="text-gray-800 hover:text-red-600" title="Log out">
               <svg className="h-5 w-5" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
               </svg>
             </button>
           </div>
         </header>
-        <main className="main-content">
+        <main className="p-4 bg-gray-100 min-h-screen">
           <Outlet />
         </main>
       </div>

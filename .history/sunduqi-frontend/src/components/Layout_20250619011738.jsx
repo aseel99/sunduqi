@@ -72,10 +72,10 @@ function Layout() {
       key={link.path}
       to={link.path}
       onClick={() => setMobileMenuOpen(false)}
-      className={`flex items-center gap-2 rounded px-4 py-2 ${isActive(link.path) ? 'bg-gray-200 font-bold' : ''} ${isMobile ? 'text-[#2e3e50]' : 'text-white'} ${isMobile ? 'text-base' : 'text-sm'}`}
+      className={`sidebar-link ${isActive(link.path) ? 'bg-[#1A237E] text-white' : isMobile ? 'text-[#1A237E]' : 'text-white'} ${isMobile ? 'text-base' : 'text-sm'} flex items-center gap-2 px-3 py-2 rounded`}
     >
       <span>{link.icon}</span>
-      {link.name}
+      <span>{link.name}</span>
       {link.badge > 0 && <span className="badge">{link.badge}</span>}
     </Link>
   );
@@ -84,7 +84,7 @@ function Layout() {
     <div key="submenu" className="space-y-1">
       <button
         onClick={() => setSubmenuOpen(!submenuOpen)}
-        className={`flex items-center justify-between w-full rounded px-4 py-2 ${submenuOpen ? 'bg-gray-200 font-bold' : ''} ${isMobile ? 'text-[#2e3e50]' : 'text-white'} ${isMobile ? 'text-base' : 'text-sm'}`}
+        className={`sidebar-link w-full justify-between ${submenuOpen ? 'bg-[#1A237E] text-white' : isMobile ? 'text-[#1A237E]' : 'text-white'} ${isMobile ? 'text-base' : 'text-sm'} flex items-center px-3 py-2 rounded`}
       >
         <span className="flex items-center gap-2">📂 تفاصيل الكاش والسندات</span>
         <svg className={`h-4 w-4 transform transition-transform ${submenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor">
@@ -102,7 +102,7 @@ function Layout() {
   return (
     <div className="min-h-screen flex bg-lightgray text-darkgray font-arabic" dir="rtl">
       {/* Sidebar Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-[#2e3e50] text-white rounded-tr-xl rounded-br-xl shadow-md">
+      <aside className="hidden md:flex flex-col w-64 bg-[#1A237E] text-white rounded-tr-xl rounded-br-xl shadow-md">
         <div className="sidebar-header p-4 text-center">
           <img src={logo} alt="صندوقي" className="h-12 w-auto mx-auto mb-2" />
           <div className="text-xl font-bold">صندوقي</div>
@@ -111,9 +111,9 @@ function Layout() {
         <div className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
           {filteredLinks.map(link => link.type === 'submenu' ? renderSubmenu(false) : renderLink(link, false))}
         </div>
-        <div className="p-4 border-t border-gray-600">
-          <button onClick={handleLogout} className="flex items-center gap-2 text-white">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="p-4 border-t border-borderGray">
+          <button onClick={handleLogout} className="logout-button text-white flex items-center gap-1">
+            <svg className="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
             </svg>
             تسجيل خروج
@@ -123,7 +123,7 @@ function Layout() {
 
       {/* Sidebar Mobile */}
       <div className={`fixed inset-0 bg-white z-50 transition-transform duration-300 md:hidden ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex items-center justify-between px-4 py-4 bg-[#2e3e50] text-white">
+        <div className="flex items-center justify-between px-4 py-4 bg-[#1A237E] text-white">
           <div className="flex items-center gap-2">
             <img src={logo} alt="شعار" className="h-8 w-auto" />
             <span className="text-lg font-bold">صندوقي</span>
@@ -134,10 +134,10 @@ function Layout() {
             </svg>
           </button>
         </div>
-        <nav className="px-4 py-4 space-y-2">
+        <nav className="px-4 py-4 space-y-2 text-[#1A237E]">
           {filteredLinks.map(link => link.type === 'submenu' ? renderSubmenu(true) : renderLink(link, true))}
-          <button onClick={handleLogout} className="flex items-center gap-2 text-[#2e3e50] mt-4">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <button onClick={handleLogout} className="logout-button mt-4 flex items-center gap-1 text-[#1A237E]">
+            <svg className="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
             </svg>
             تسجيل خروج
@@ -147,15 +147,15 @@ function Layout() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
-        <header className="mobile-header">
-          <button onClick={() => setMobileMenuOpen(true)} className="text-[#2e3e50]">
+        <header className="mobile-header p-3 flex justify-between items-center bg-white shadow-md md:hidden">
+          <button onClick={() => setMobileMenuOpen(true)} className="text-[#1A237E]">
             <svg className="h-6 w-6" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
           <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold">{user?.full_name}</span>
-            <button onClick={handleLogout} className="text-[#2e3e50] hover:text-red-600" title="Log out">
+            <span className="text-sm font-semibold text-[#1A237E]">{user?.full_name}</span>
+            <button onClick={handleLogout} className="text-[#1A237E] hover:text-red-600" title="Log out">
               <svg className="h-5 w-5" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7" />
               </svg>
