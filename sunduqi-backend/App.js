@@ -18,27 +18,25 @@ console.log('🔧 Initializing application...');
 console.log(`Environment: ${NODE_ENV}`);
 console.log(`Port: ${PORT}`);
 
-// Log each incoming request method + URL
+// Logging each request method + URL
 app.use((req, res, next) => {
   console.log(`🛣️  ${req.method} ${req.url}`);
   next();
 });
 
-// ✅ Safe CORS configuration
-const allowedOrigin = process.env.CORS_ORIGIN || '*';
+// ✅ Safe CORS configuration with multiple allowed origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://sunduqi.vercel.app',
+  'https://sunduqi-q27f1vcck-aseel99s-projects.vercel.app'
+];
 
 app.use(cors({
   origin: (origin, callback) => {
-    try {
-      const originToUse = allowedOrigin;
-
-      if (!/^[a-zA-Z0-9-.:/]+$/.test(originToUse)) {
-        throw new Error(`Invalid CORS origin: ${originToUse}`);
-      }
-
-      callback(null, originToUse);
-    } catch (err) {
-      callback(err);
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Invalid CORS origin: ' + origin));
     }
   },
   credentials: true,
@@ -47,11 +45,11 @@ app.use(cors({
 }));
 console.log('✅ CORS configured');
 
-// ✅ Set security headers
+// ✅ Security headers
 app.use(helmet());
 console.log('✅ Security headers enabled');
 
-// ✅ HTTP request logger (disabled in test env)
+// ✅ Request logging (skip if testing)
 if (NODE_ENV !== 'test') {
   app.use(morgan('dev'));
   console.log('✅ Request logging enabled');
@@ -62,10 +60,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 console.log('✅ Body parsers configured');
 
-// ✅ Static files for uploaded assets
+// ✅ Static file serving
 app.use('/uploads', express.static('uploads'));
 
-// ✅ Load API routes
+// ✅ Mount API routes
 console.log('🔄 Loading routes...');
 app.use('/api', routes);
 console.log('✅ Routes mounted at /api');
@@ -78,7 +76,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Central error handling
+// ✅ Centralized error handler
 app.use(errorHandler);
 console.log('✅ Error handler configured');
 
@@ -104,7 +102,7 @@ db.sequelize.authenticate()
       console.log(`📡 Environment: ${NODE_ENV}`);
     });
 
-    // Graceful shutdown on SIGINT (Ctrl+C)
+    // Graceful shutdown
     process.on('SIGINT', () => {
       console.log('\n🛑 Received SIGINT. Shutting down gracefully...');
       server.close(() => {
