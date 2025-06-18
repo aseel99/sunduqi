@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* إعدادات عامة */
+body {
+  direction: rtl;
+  @apply bg-[#f4f4f4] text-[#1c1c1c] font-[Tajawal] text-sm leading-relaxed;
+}
+
+/* عناصر الإدخال */
+input, select, textarea {
+  @apply border border-[#dcdcdc] rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#047291] transition;
+}
+
+/* الأزرار */
+button {
+  @apply font-semibold transition duration-150 ease-in-out rounded px-4 py-2;
+}
+
+/* أزرار خاصة */
+.btn-primary {
+  @apply bg-yellow-400 text-[#1c1c1c] hover:bg-yellow-500;
+}
+.btn-secondary {
+  @apply bg-gray-200 text-[#33485d] hover:bg-gray-300;
+}
+
+/* العناوين */
+.heading {
+  @apply text-lg font-bold text-[#33485d] mb-2;
+}
+
+/* بطاقات */
+.card {
+  @apply bg-white p-5 rounded-lg shadow-[0_0_12px_#ccc];
+}
+
+/* روابط الشريط الجانبي */
+.sidebar-link {
+  @apply flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition;
+}
+.sidebar-link-active {
+  @apply bg-yellow-400 text-black shadow;
+}
+.sidebar-link-inactive {
+  @apply text-white hover:bg-[#017187];
+}
+
+/* اسم التطبيق في الأعلى داخل الشريط الجانبي */
+.sidebar-header {
+  @apply bg-yellow-400 text-black text-center py-4;
+}
+.sidebar-header .app-name {
+  @apply text-lg font-bold;
+}
+.sidebar-header .app-sub {
+  @apply text-xs font-semibold;
+}
+
+/* الإشعارات */
+.badge {
+  @apply ml-auto bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5;
+}
+
+/* قائمة الروابط */
+.nav-wrapper {
+  @apply px-2 py-4 space-y-2;
+}
+
+/* تسجيل الخروج */
+.logout-button {
+  @apply w-full flex items-center justify-center hover:text-red-500 text-sm;
+}
+
+/* الشريط العلوي (الهيدر) للجوال */
+.mobile-header {
+  @apply md:hidden bg-white shadow p-4 flex justify-between items-center;
+}
+
+/* المحتوى الرئيسي */
+.main-content {
+  @apply p-4 md:p-6 flex-grow bg-white m-4 rounded-md shadow-[0_0_12px_#ccc];
+}

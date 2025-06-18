@@ -34,7 +34,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     notes: {
       type: DataTypes.TEXT
+    },
+    is_previous_closed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
     }
+
   }, {
     tableName: 'opening_balances',
     timestamps: true,

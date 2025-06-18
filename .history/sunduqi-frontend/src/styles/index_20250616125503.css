@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  direction: rtl;
+  @apply bg-[#f4f4f4] text-[#33485d] font-[Tajawal] text-sm leading-relaxed;
+}
+
+.sidebar-link {
+  @apply flex items-center justify-between gap-2 px-4 py-2 rounded text-sm font-medium transition;
+}
+
+.sidebar-link-active {
+  @apply bg-yellow-400 text-black shadow;
+}
+
+.sidebar-link-inactive {
+  @apply text-white hover:bg-cyan-700;
+}
+
+.card {
+  @apply bg-white p-4 rounded-lg shadow-md;
+}

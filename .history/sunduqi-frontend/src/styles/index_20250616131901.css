@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  body {
+    @apply bg-lightgray text-darkgray font-arabic text-sm leading-relaxed;
+  }
+
+  input, select, textarea {
+    @apply border border-bordergray rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-darkblue transition;
+  }
+
+  button {
+    @apply font-semibold transition duration-150 ease-in-out rounded px-4 py-2;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition text-white hover:bg-[#01627c];
+  }
+
+  .sidebar-link-active {
+    @apply bg-white text-darkblue font-bold;
+  }
+
+  .sidebar-header {
+    @apply bg-darkblue text-white text-center py-4;
+  }
+
+  .badge {
+    @apply ml-auto bg-danger text-white text-xs font-bold rounded-full px-2 py-0.5;
+  }
+
+  .logout-button {
+    @apply w-full flex items-center justify-center text-sm hover:text-danger;
+  }
+
+  .mobile-header {
+    @apply md:hidden bg-white shadow p-4 flex justify-between items-center;
+  }
+
+  .main-content {
+    @apply p-4 md:p-6 flex-grow bg-white m-4 rounded-md shadow-[0_0_12px_#ccc];
+  }
+}

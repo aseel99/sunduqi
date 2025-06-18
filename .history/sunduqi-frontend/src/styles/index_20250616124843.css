@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* إعدادات عامة للجسم */
+body {
+  direction: rtl;
+  @apply bg-[#f4f4f4] text-[#33485d] font-[Tajawal] text-sm leading-relaxed;
+}
+
+/* تنسيق عناصر الإدخال */
+input, select, textarea {
+  @apply border border-[#dcdcdc] rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-[#047291] transition;
+}
+
+/* الأزرار العامة */
+button {
+  @apply font-semibold transition duration-150 ease-in-out rounded px-4 py-2;
+}
+
+/* زر رئيسي (أصفر) */
+.btn-primary {
+  @apply bg-yellow-400 text-[#1c1c1c] hover:bg-yellow-500;
+}
+
+/* زر ثانوي رمادي */
+.btn-secondary {
+  @apply bg-gray-200 text-[#33485d] hover:bg-gray-300;
+}
+
+/* عناوين عامة */
+.heading {
+  @apply text-lg font-bold text-[#33485d] mb-2;
+}
+
+/* بطاقات */
+.card {
+  @apply bg-white p-5 rounded-lg shadow-[0_0_12px_#8e8e8e];
+}
+
+/* الجداول */
+table {
+  @apply w-full border text-right text-sm;
+}
+
+th {
+  @apply bg-gray-100 border px-3 py-2 text-[#43576a] text-sm font-semibold;
+}
+
+td {
+  @apply border px-3 py-2 text-[#33485d];
+}
+
+tr:hover {
+  @apply bg-gray-50;
+}
