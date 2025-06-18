@@ -18,40 +18,26 @@ console.log('🔧 Initializing application...');
 console.log(`Environment: ${NODE_ENV}`);
 console.log(`Port: ${PORT}`);
 
-// Log each incoming request method + URL
+// Logging each request method + URL
 app.use((req, res, next) => {
   console.log(`🛣️  ${req.method} ${req.url}`);
   next();
 });
 
-// ✅ Safe CORS configuration
-const allowedOrigin = process.env.CORS_ORIGIN || '*';
-
+// ✅ CORS configuration (allow all or from environment)
 app.use(cors({
-  origin: (origin, callback) => {
-    try {
-      const originToUse = allowedOrigin;
-
-      if (!/^[a-zA-Z0-9-.:/]+$/.test(originToUse)) {
-        throw new Error(`Invalid CORS origin: ${originToUse}`);
-      }
-
-      callback(null, originToUse);
-    } catch (err) {
-      callback(err);
-    }
-  },
+  origin: process.env.CORS_ORIGIN || '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 console.log('✅ CORS configured');
 
-// ✅ Set security headers
+// ✅ Add security headers
 app.use(helmet());
 console.log('✅ Security headers enabled');
 
-// ✅ HTTP request logger (disabled in test env)
+// ✅ Request logging (disabled in test env)
 if (NODE_ENV !== 'test') {
   app.use(morgan('dev'));
   console.log('✅ Request logging enabled');
@@ -62,10 +48,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 console.log('✅ Body parsers configured');
 
-// ✅ Static files for uploaded assets
+// ✅ Static files for uploads
 app.use('/uploads', express.static('uploads'));
 
-// ✅ Load API routes
+// ✅ Mount routes under /api
 console.log('🔄 Loading routes...');
 app.use('/api', routes);
 console.log('✅ Routes mounted at /api');
@@ -78,11 +64,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Central error handling
+// ✅ Centralized error handler
 app.use(errorHandler);
 console.log('✅ Error handler configured');
 
-// ✅ Connect to database and start server
+// ✅ Database connection and server startup
 console.log('🔗 Connecting to database...');
 db.sequelize.authenticate()
   .then(() => {
@@ -104,7 +90,7 @@ db.sequelize.authenticate()
       console.log(`📡 Environment: ${NODE_ENV}`);
     });
 
-    // Graceful shutdown on SIGINT (Ctrl+C)
+    // ✅ Graceful shutdown
     process.on('SIGINT', () => {
       console.log('\n🛑 Received SIGINT. Shutting down gracefully...');
       server.close(() => {
