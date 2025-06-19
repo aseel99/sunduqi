@@ -411,44 +411,45 @@ exports.getTodayDeliveriesByStatus = async (req, res) => {
 };
 
 
+// Close cashbox only: add delivery records for unmatched cash_matchings
 exports.closeCashboxOnly = async (req, res) => {
   try {
     const userId = req.user.id;
     const branchId = req.user.branch_id;
-    const today = new Date().toISOString().split('T')[0];
 
-    // ✅ 1. جلب المطابقات بدون تسليم أو إغلاق مسبق
+    // 1️⃣ Fetch cash matchings not already in cash_deliveries
     const matchings = await CashMatching.findAll({
       where: {
         user_id: userId,
         branch_id: branchId,
-        //date: today,
         opening_balance_id: {
           [Op.notIn]: Sequelize.literal(`(
             SELECT "opening_balance_id"
             FROM "cash_deliveries"
-            WHERE ("is_verified" = true OR "is_closed_only" = true)
+            WHERE "is_verified" = TRUE OR "is_closed_only" = TRUE
           )`)
         }
       }
     });
 
-    if (!matchings || matchings.length === 0) {
+    if (!matchings.length) {
       return res.status(400).json({ message: 'لا توجد مطابقات مالية لإغلاق الصندوق' });
     }
 
     const deliveries = [];
 
+    // 2️⃣ For each unmatched matching, create a cash_delivery row
     for (const match of matchings) {
-      // ✅ إنشاء التسليم
+      const deliveryNumber = `CL-${Date.now().toString().slice(-8)}-${Math.floor(Math.random() * 10)}`;
+
       const delivery = await CashDelivery.create({
-        delivery_number: `CL-${Date.now().toString().slice(-8)}-${Math.floor(Math.random() * 10)}`,
+        delivery_number: deliveryNumber,
         user_id: userId,
         branch_id: branchId,
         delivered_amount: match.actual_total,
         total_receipts: null,
         total_disbursements: null,
-        date: today,
+        // omit date field entirely so it defaults to now()
         notes: 'إغلاق صندوق بدون تسليم',
         is_verified: false,
         is_closed_only: true,
@@ -458,7 +459,7 @@ exports.closeCashboxOnly = async (req, res) => {
 
       deliveries.push(delivery);
 
-      // ✅ إغلاق الافتتاح الحالي
+      // 3️⃣ Mark the corresponding opening_balance as closed
       await OpeningBalance.update(
         { is_previous_closed: true },
         { where: { id: match.opening_balance_id } }
@@ -471,10 +472,14 @@ exports.closeCashboxOnly = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error closing cashbox:', error);
-    return res.status(500).json({ message: 'فشل في إغلاق الصندوق', error: error.message });
+    console.error('Error in closeCashboxOnly:', error);
+    return res.status(500).json({
+      message: 'فشل في إغلاق الصندوق',
+      error: error.message
+    });
   }
 };
+
 
 exports.deliverClosedCash = async (req, res) => {
   try {
