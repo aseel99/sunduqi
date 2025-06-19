@@ -411,13 +411,13 @@ exports.getTodayDeliveriesByStatus = async (req, res) => {
 };
 
 
-// Close cashbox only: add delivery records for unmatched cash_matchings
 exports.closeCashboxOnly = async (req, res) => {
   try {
     const userId = req.user.id;
     const branchId = req.user.branch_id;
+    const today = new Date().toISOString().split('T')[0];
 
-    // 1️⃣ Fetch cash matchings not already in cash_deliveries
+    // ✅ جلب كل المطابقات التي لا يوجد لها تسليم أو إغلاق سابق
     const matchings = await CashMatching.findAll({
       where: {
         user_id: userId,
@@ -426,30 +426,27 @@ exports.closeCashboxOnly = async (req, res) => {
           [Op.notIn]: Sequelize.literal(`(
             SELECT "opening_balance_id"
             FROM "cash_deliveries"
-            WHERE "is_verified" = TRUE OR "is_closed_only" = TRUE
+            WHERE "is_verified" = true OR "is_closed_only" = true
           )`)
         }
       }
     });
 
-    if (!matchings.length) {
-      return res.status(400).json({ message: 'لا توجد مطابقات مالية لإغلاق الصندوق' });
+    if (!matchings || matchings.length === 0) {
+      return res.status(400).json({ message: 'لا توجد مطابقات مالية متاحة لإغلاق الصندوق' });
     }
 
     const deliveries = [];
 
-    // 2️⃣ For each unmatched matching, create a cash_delivery row
     for (const match of matchings) {
-      const deliveryNumber = `CL-${Date.now().toString().slice(-8)}-${Math.floor(Math.random() * 10)}`;
-
       const delivery = await CashDelivery.create({
-        delivery_number: deliveryNumber,
+        delivery_number: `CL-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 10)}`,
         user_id: userId,
         branch_id: branchId,
         delivered_amount: match.actual_total,
         total_receipts: null,
         total_disbursements: null,
-        // omit date field entirely so it defaults to now()
+        date: today,
         notes: 'إغلاق صندوق بدون تسليم',
         is_verified: false,
         is_closed_only: true,
@@ -459,7 +456,6 @@ exports.closeCashboxOnly = async (req, res) => {
 
       deliveries.push(delivery);
 
-      // 3️⃣ Mark the corresponding opening_balance as closed
       await OpeningBalance.update(
         { is_previous_closed: true },
         { where: { id: match.opening_balance_id } }
@@ -472,13 +468,11 @@ exports.closeCashboxOnly = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error in closeCashboxOnly:', error);
-    return res.status(500).json({
-      message: 'فشل في إغلاق الصندوق',
-      error: error.message
-    });
+    console.error('Error closing cashbox:', error);
+    res.status(500).json({ message: 'فشل في إغلاق الصندوق', error: error.message });
   }
 };
+
 
 
 exports.deliverClosedCash = async (req, res) => {
