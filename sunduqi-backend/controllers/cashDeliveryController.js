@@ -422,7 +422,7 @@ exports.closeCashboxOnly = async (req, res) => {
       where: {
         user_id: userId,
         branch_id: branchId,
-        date: today,
+        //date: today,
         opening_balance_id: {
           [Op.notIn]: Sequelize.literal(`(
             SELECT "opening_balance_id"
