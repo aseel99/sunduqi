@@ -410,7 +410,6 @@ exports.getTodayDeliveriesByStatus = async (req, res) => {
   }
 };
 
-
 exports.closeCashboxOnly = async (req, res) => {
   try {
     const userId = req.user.id;
