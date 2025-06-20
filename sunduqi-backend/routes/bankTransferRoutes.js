@@ -1,15 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const bankTransferController = require('../controllers/bankTransferController');
-const auth = require('../middleware/auth'); // ✅ دالة صحيحة هنا
+const auth = require('../middleware/auth');
 
-// Route to check transfer status
 router.get('/check', auth, bankTransferController.checkTransferStatus);
-
-// Route to confirm transfer
 router.post('/confirm', auth, bankTransferController.confirmTransfer);
-
+router.post('/bulk-transfer', auth, bankTransferController.bulkTransferFromTotal);
 router.get('/summary', auth, bankTransferController.getTransferSummary);
-
 
 module.exports = router;

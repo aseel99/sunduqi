@@ -116,6 +116,14 @@ function Layout() {
           <div className="text-xl font-bold">صندوقي</div>
           <div className="text-xs opacity-80">نظام إدارة الكاش</div>
         </div>
+          {user && (
+          <div className="text-center text-white text-sm mb-2 px-2 leading-relaxed">
+            <div className="font-semibold">أهلاً، {user.full_name}</div>
+            <div className="text-xs opacity-80">
+              آخر دخول: {new Date(user.last_login).toLocaleString('ar-JO', { dateStyle: 'short', timeStyle: 'short' })}
+            </div>
+          </div>
+        )}
         <div className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
           {filteredLinks.map(link => (link.type === 'submenu' ? renderSubmenu(false) : renderLink(link, false)))}
         </div>

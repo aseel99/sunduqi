@@ -40,6 +40,7 @@ exports.login = async (req, res) => {
         full_name: user.full_name,
         role: user.role,
         branch_id: user.branch_id,
+        last_login: user.last_login,
       },
     });
   } catch (error) {
