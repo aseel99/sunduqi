@@ -28,7 +28,9 @@ app.use((req, res, next) => {
 const allowedOrigins = [
   'http://localhost:5173',
   'https://sunduqi.vercel.app',
-  'https://sunduqi-q27f1vcck-aseel99s-projects.vercel.app'
+  'https://sunduqi-q27f1vcck-aseel99s-projects.vercel.app',
+  'https://sunduqi-git-main-ashrafs-projects-37380804.vercel.app',
+  'https://sunduqi-steel.vercel.app/'
 ];
 
 app.use(cors({
